@@ -5,7 +5,7 @@ A Template Directory Manager CLI Software.
 
 ------------
 
-#### How it Works
+### How it Works
 Do you want to use your own templates on your projects simply by placing the name of your template in the Command Prompt? This is the right place !
 
 **At the moment there are 3 types of commands to do on the Command Prompt:**
@@ -21,5 +21,5 @@ Do you want to use your own templates on your projects simply by placing the nam
 
 ------------
 
-### Contributions to the project are welcome!
+## Contributions to the project are welcome!
 
