@@ -1,0 +1,1 @@
+g++ -o tmpl.exe tmpl.cpp -std=c++17 -lstdc++fs -static-libgcc -static-libstdc++ -static -lshlwapi
