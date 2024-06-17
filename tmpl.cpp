@@ -96,7 +96,7 @@ void applyTemplate(const std::string& templateName) {
     }
 
     templateFile.close();
-    std::cout << "Template applied." << std::endl;
+    std::cout << "Template applied: " << templateName << std::endl;
 }
 
 void deleteTemplate(const std::string& templateName) {
@@ -113,30 +113,63 @@ void deleteTemplate(const std::string& templateName) {
     
 }
 
+void templateList() {
+
+    std::string directory = getExecutableDir() + "/";
+    std::vector<std::string> templates;
+    for (const auto& entry : std::filesystem::directory_iterator(directory)) {
+        if (entry.is_regular_file() && entry.path().extension() == ".tmpl") {
+            templates.push_back(entry.path().stem().string());
+        }
+    }
+
+    std::cerr << "Your created Templates : " << std::endl << std::endl;
+
+    for (const std::string& templateFile : templates) {
+        std::cerr << templateFile << std::endl;
+    }
+
+}
+
+void actualVersion() {
+    std::cerr << "Version of tmpl : 1.2" << std::endl;
+}
+
 
 
 int main(int argc, char* argv[]) {
     if (argc < 3) {
-        std::cerr << "Usage: tmpl <command> <template_name>" << std::endl << std::endl;
+        std::cerr << "Usage: tmpl <command> <template_name | command_argument>" << std::endl << std::endl;
         std::cerr << "Example: " << std::endl;
-        std::cerr << "tmpl create myTemplateName" << std::endl;
-        std::cerr << "tmpl get myTemplateName" << std::endl;
-        std::cerr << "tmpl delete myTemplateName" << std::endl;
+        std::cerr << "tmpl create myTemplateName  [Create a Template using the folder in which you ran this command]" << std::endl;
+        std::cerr << "tmpl get myTemplateName  [Import the template you created to the selected folder.]" << std::endl;
+        std::cerr << "tmpl delete myTemplateName  [Delete a Template.]" << std::endl;
+        std::cerr << "tmpl show -l  [Shows the list of templates you created.]" << std::endl;
+        std::cerr << "tmpl show -v  [Shows the current version of tmpl installed on your computer.]" << std::endl;
+
 
         return 1;
     }
 
     std::string command = argv[1];
-    std::string templateName = argv[2];
+    std::string argumentCommand = argv[2];
 
     if (command == "create") {
-        createTemplate(templateName);
+        createTemplate(argumentCommand);
     } else if (command == "get") {
-        applyTemplate(templateName);
+        applyTemplate(argumentCommand);
     } else if(command == "delete") {
-        deleteTemplate(templateName);
+        deleteTemplate(argumentCommand);
+    } else if (command == "show") {
+
+        if (argumentCommand == "-l") {
+            templateList();
+        } else if (argumentCommand == "-v") {
+            actualVersion();
+        }
+
     } else {
-        std::cerr << "Invalid command. Use 'create' or 'get'." << std::endl;
+        std::cerr << "Invalid command. Use 'create', 'get', 'delete', 'show -l' or 'show -v'." << std::endl;
         return 1;
     }
 

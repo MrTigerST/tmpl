@@ -8,16 +8,17 @@ A Template Directory Manager CLI Software.
 ### How it Works
 Do you want to use your own templates on your projects simply by placing the name of your template in the Command Prompt? This is the right place !
 
-**At the moment there are 3 types of commands to do on the Command Prompt:**
+**At the moment there are 5 types of commands to do on the Command Prompt:**
 
  > `tmpl create templateName` this creates a new template using the folder where you ran this command .
-  
  
  > `tmpl get templateName` this uses a template you have already created, on the folder where you ran this command
  
- > `tmpl delete templateName` Well... delete a Template you created!
+ > `tmpl delete templateName` well... delete a Template you created!
  
- 
+ > `tmpl show -l` shows the list of templates you created.
+
+ > `tmpl show -v` shows the current version of tmpl installed on your computer..
 
 ------------
 
