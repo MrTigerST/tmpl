@@ -14,6 +14,17 @@ You can give any name to your template, for example do the following command on 
 
 Perfect ! You have created your Template! Now, if you want to get it, just go to a folder you want and write tmpl get hello: as you can see, the same folders and files will appear in the folder as the folder from which you created the template (obviously it will only collect the template data, not of the folder where you made the template, so any subsequent updates of the folder where you made the template will not be included).
 
+------------
+
+## How to Install
+
+To install tmpl, go to the [Release Page](https://github.com/MrTigerST/tmpl/releases) of this Repository.
+
+------------
+
+### Commands
+
+
 **At the moment there are 9 types of commands to do on the Command Prompt:**
 
  > `tmpl create <template_name>` this creates a new template using the folder where you ran this command .
