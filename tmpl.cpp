@@ -4,6 +4,7 @@
 #include <string>
 #include <vector>
 #include <sstream>
+#include <algorithm>
 #include <shlwapi.h>
 #include <winhttp.h>
 
@@ -220,14 +221,24 @@ string getLatestReleaseVersion() {
     return response;
 }
 
+std::string __space__remover__(const std::string &str) {
+    std::string result;
+    std::remove_copy_if(str.begin(), str.end(), std::back_inserter(result), [](char ch) {
+        return std::isspace(ch);
+    });
+    return result;
+}
+
 void checkForUpdates() {
     string latestVersion = getLatestReleaseVersion();
 
     if (!latestVersion.empty()) {
 
-        cerr << "Latest version: " << latestVersion << endl;
+
+        cerr << "Latest version: " <<  __space__remover__(latestVersion) << endl;
+        
         cerr << "Your version: " << VERSION << endl;
-        if (latestVersion != VERSION) {
+        if ( __space__remover__(latestVersion) != VERSION) {
             cerr << "A new version of tmpl is available! Please download the Update from GitHub (https://github.com/MrTigerST/tmpl/releases)." << endl;
         } else {
             cerr << "You are using the latest version." << endl;
