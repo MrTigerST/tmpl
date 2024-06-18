@@ -7,7 +7,6 @@
 #include <shlwapi.h>
 #include <winhttp.h>
 
-#define VERSION "1.5"
 
 #pragma comment(lib, "winhttp.lib")
 
@@ -19,6 +18,8 @@
 
 namespace fs = std::filesystem;
 using namespace std;
+
+const string VERSION = "1.5";
 
 void xorCrypt(string& data, const string& key) {
     for (size_t i = 0; i < data.size(); ++i) {
@@ -125,10 +126,16 @@ void templateList() {
         }
     }
 
-    cerr << "Your created Templates: " << endl << endl;
 
-    for (const string& templateFile : templates) {
-        cerr << templateFile << endl;
+    if (templates.empty()) {
+        cerr << "No templates found." << endl;
+    } else {
+
+        cerr << "Your created Templates: " << endl << endl;
+
+        for (const string& templateFile : templates) {
+            cerr << templateFile << endl;
+        }
     }
 }
 
@@ -138,11 +145,21 @@ void actualVersion()
 }
 
 string getLatestReleaseVersion() {
-    wstring url = L"/repos/MrTigerST/tmpl/releases/latest";
+    wstring url = L"/MrTigerST/tmpl/main/version";
     HINTERNET hSession = WinHttpOpen(L"tmpl/1.0", WINHTTP_ACCESS_TYPE_DEFAULT_PROXY, WINHTTP_NO_PROXY_NAME, WINHTTP_NO_PROXY_BYPASS, 0);
-    HINTERNET hConnect = WinHttpConnect(hSession, L"api.github.com", INTERNET_DEFAULT_HTTPS_PORT, 0);
-    HINTERNET hRequest = WinHttpOpenRequest(hConnect, L"GET", url.c_str(), NULL, WINHTTP_NO_REFERER, WINHTTP_DEFAULT_ACCEPT_TYPES, WINHTTP_FLAG_SECURE);
+    if (!hSession) {
+        cerr << "Failed to open HTTP session." << endl;
+        return "";
+    }
 
+    HINTERNET hConnect = WinHttpConnect(hSession, L"raw.githubusercontent.com", INTERNET_DEFAULT_HTTPS_PORT, 0);
+    if (!hConnect) {
+        cerr << "Failed to connect to server." << endl;
+        WinHttpCloseHandle(hSession);
+        return "";
+    }
+
+    HINTERNET hRequest = WinHttpOpenRequest(hConnect, L"GET", url.c_str(), NULL, WINHTTP_NO_REFERER, WINHTTP_DEFAULT_ACCEPT_TYPES, WINHTTP_FLAG_SECURE);
     if (!hRequest) {
         cerr << "Failed to open HTTP request." << endl;
         WinHttpCloseHandle(hConnect);
@@ -166,33 +183,41 @@ string getLatestReleaseVersion() {
         return "";
     }
 
+    string response;
     DWORD dwSize = 0;
-    WinHttpQueryDataAvailable(hRequest, &dwSize);
-
-    string response(dwSize, '\0');
     DWORD dwDownloaded = 0;
-    if (!WinHttpReadData(hRequest, &response[0], dwSize, &dwDownloaded)) {
-        cerr << "Failed to read HTTP response." << endl;
-        WinHttpCloseHandle(hRequest);
-        WinHttpCloseHandle(hConnect);
-        WinHttpCloseHandle(hSession);
-        return "";
-    }
+    do {
+        dwSize = 0;
+        if (!WinHttpQueryDataAvailable(hRequest, &dwSize)) {
+            cerr << "Failed to query data available." << endl;
+            WinHttpCloseHandle(hRequest);
+            WinHttpCloseHandle(hConnect);
+            WinHttpCloseHandle(hSession);
+            return "";
+        }
+
+        if (dwSize == 0) {
+            break;
+        }
+
+        vector<char> buffer(dwSize);
+        if (!WinHttpReadData(hRequest, buffer.data(), dwSize, &dwDownloaded)) {
+            cerr << "Failed to read HTTP response." << endl;
+            WinHttpCloseHandle(hRequest);
+            WinHttpCloseHandle(hConnect);
+            WinHttpCloseHandle(hSession);
+            return "";
+        }
+
+        response.append(buffer.begin(), buffer.begin() + dwDownloaded);
+    } while (dwSize > 0);
 
     WinHttpCloseHandle(hRequest);
     WinHttpCloseHandle(hConnect);
     WinHttpCloseHandle(hSession);
 
-    size_t pos = response.find("\"tag_name\":\"");
-    if (pos != string::npos) {
-        pos += 11;
-        size_t endPos = response.find("\"", pos);
-        if (endPos != string::npos) {
-            return response.substr(pos, endPos - pos);
-        }
-    }
 
-    return "";
+    return response;
 }
 
 void checkForUpdates() {
@@ -209,7 +234,7 @@ void checkForUpdates() {
         }
 
     } else {
-        cerr << "Failed to check for updates or an update is not yet available." << endl;
+        cerr << "Failed to check for updates. Check your internet connection and try again." << endl;
     }
 
 }
