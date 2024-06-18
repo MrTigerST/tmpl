@@ -1,6 +1,6 @@
 # tmpl
 
-A Template Directory Manager CLI Software.
+A Template Directory Manager CLI Software (Windows only for now).
 
 
 ------------
