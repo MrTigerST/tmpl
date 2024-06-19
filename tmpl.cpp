@@ -132,7 +132,7 @@ void templateList() {
         cerr << "No templates found." << endl;
     } else {
 
-        cerr << "Your created Templates: " << endl << endl;
+        cerr << "Your Templates: " << endl << endl;
 
         for (const string& templateFile : templates) {
             cerr << templateFile << endl;
@@ -313,7 +313,7 @@ void showHelpCommand() {
     cerr << "tmpl get <template_name>  (Import the template you created to the selected folder.)" << endl << endl;
     cerr << "tmpl delete <template_name>  (Delete a Template.)" << endl << endl;
     cerr << "tmpl list  (Shows the list of templates you created.)" << endl << endl;
-    cerr << "tmpl import <template_input_file> [template_name] (Import an external template that you can immediately use. In the template_name parameter, you must put the name you want to give to the template which, if left empty, will use the name of the Template File.)" << endl << endl;
+    cerr << "tmpl import <template_input_file> [template_name] (Import an external template that you can immediately use. In the template_name parameter, you must put the name you want to give to the template which, if left empty, will use the name of the Template file.)" << endl << endl;
     cerr << "tmpl export <template_name> <template_output_directory> (Export your template to share it.)" << endl << endl;
     cerr << "tmpl -v  (Shows the current version of tmpl installed on your computer.)" << endl << endl;
     cerr << "tmpl -u  (Check for updates on GitHub.)" << endl << endl;
@@ -334,7 +334,7 @@ int main(int argc, char* argv[]) {
         string argumentCommand = argv[1];
         if (fs::path(argumentCommand).extension() == ".tmpl") {
             importTemplate(argumentCommand);
-            return 0;
+            system("pause");
         }
     }
 
